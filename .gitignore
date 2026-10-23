@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+.env
+frontend/node_modules/
+frontend/dist/
+backend/history.db
+data/heart.zip
+data/unzipped/
+.flwr/
+outputs/
+*.log
+.vscode/
