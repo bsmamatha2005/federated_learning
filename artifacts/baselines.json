@@ -1,0 +1,77 @@
+{
+  "hospitals": [
+    "Cleveland",
+    "Hungarian",
+    "Switzerland",
+    "Va"
+  ],
+  "test_sizes": [
+    61,
+    59,
+    25,
+    40
+  ],
+  "centralized": {
+    "per_hospital": [
+      81.97,
+      88.14,
+      76.0,
+      75.0
+    ],
+    "overall": 81.62,
+    "precision": 80.36,
+    "recall": 88.24,
+    "f1": 84.11,
+    "roc_auc": 85.65
+  },
+  "local": {
+    "per_hospital": [
+      75.41,
+      81.36,
+      92.0,
+      72.5
+    ],
+    "overall": 78.92
+  },
+  "federated": {
+    "FedAvg": {
+      "per_hospital": [
+        80.33,
+        86.44,
+        72.0,
+        85.0
+      ],
+      "overall": 82.16,
+      "precision": 80.53,
+      "recall": 89.22,
+      "f1": 84.65,
+      "roc_auc": 88.66
+    },
+    "FedProx": {
+      "per_hospital": [
+        83.61,
+        86.44,
+        64.0,
+        87.5
+      ],
+      "overall": 82.7,
+      "precision": 81.82,
+      "recall": 88.24,
+      "f1": 84.91,
+      "roc_auc": 89.32
+    },
+    "FedCurv": {
+      "per_hospital": [
+        78.69,
+        86.44,
+        64.0,
+        80.0
+      ],
+      "overall": 79.46,
+      "precision": 79.09,
+      "recall": 85.29,
+      "f1": 82.08,
+      "roc_auc": 87.34
+    }
+  }
+}
