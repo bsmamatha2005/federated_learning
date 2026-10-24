@@ -1,6 +1,6 @@
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend,
-  CartesianGrid, LabelList,
+  CartesianGrid, LabelList, Cell,
 } from "recharts";
 
 const COLORS = {
@@ -38,6 +38,9 @@ export default function Baselines({ data }) {
             <YAxis domain={[60, 100]} />
             <Tooltip />
             <Bar dataKey="accuracy" name="Accuracy %">
+              {overall.map((d) => (
+                <Cell key={d.name} fill={COLORS[d.name] || "#555"} />
+              ))}
               <LabelList dataKey="accuracy" position="top" />
             </Bar>
           </BarChart>

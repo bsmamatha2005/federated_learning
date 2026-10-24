@@ -115,3 +115,31 @@ export default function App() {
           </h2>
           <p>Model used: {result.model}</p>
           <button onClick={downloadReport} style={{ padding: 8, cursor: "pointer" }}>
+            Download report
+          </button>
+        </div>
+      )}
+
+      <FLProcess data={flp} baselines={baselines} />
+      <Baselines data={baselines} />
+      <Charts compare={compare} />
+
+      <h3>Prediction history</h3>
+      <table border="1" cellPadding="6" style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr><th>Time</th><th>Age</th><th>Probability</th><th>Risk</th></tr>
+        </thead>
+        <tbody>
+          {history.map((h) => (
+            <tr key={h.id}>
+              <td>{h.created}</td>
+              <td>{h.inputs.age}</td>
+              <td>{(h.probability * 100).toFixed(1)}%</td>
+              <td style={{ color: h.binary ? "crimson" : "green" }}>{h.risk}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
