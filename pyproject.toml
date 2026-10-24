@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "federated-learning-app"
+version = "1.0.0"
+description = "Federated learning heart disease prediction"
+license = "Apache-2.0"
+dependencies = [
+    "flwr>=1.42.0",
+    "torch",
+    "numpy",
+    "pandas",
+    "scikit-learn",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["federated_learning_app"]
+
+[tool.flwr.app]
+publisher = "bsmamatha2005"
+
+[tool.flwr.app.components]
+serverapp = "federated_learning_app.server_app:app"
+clientapp = "federated_learning_app.client_app:app"
+
+[tool.flwr.app.config]
+num-server-rounds = 10
+learning-rate = 0.01
+local-epochs = 3
+batch-size = 32
