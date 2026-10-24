@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -26,11 +27,18 @@ def load_data(idx: int, batch_size: int):
             DataLoader(test, batch_size=batch_size))
 
 
-def train(model, loader, epochs, lr, device, mu=0.0):
+def flat_params(model) -> np.ndarray:
+    return np.concatenate([p.detach().cpu().numpy().ravel() for p in model.parameters()])
+
+
+def train(model, loader, epochs, lr, device, mu=0.0, curv=None, lam=0.0):
     model.to(device).train()
     crit = nn.BCEWithLogitsLoss()
     opt = torch.optim.Adam(model.parameters(), lr=lr)
     global_params = [p.detach().clone() for p in model.parameters()]  # server's model
+    if curv is not None:                                  # FedCurv: A = sum F_j, b = sum F_j*theta_j
+        A = torch.from_numpy(curv[0]).to(device)
+        b = torch.from_numpy(curv[1]).to(device)
     total, n = 0.0, 0
     for _ in range(epochs):
         for X, y in loader:
@@ -38,15 +46,34 @@ def train(model, loader, epochs, lr, device, mu=0.0):
             opt.zero_grad()
             base = crit(model(X), y)
             loss = base
-            if mu > 0:   # FedProx: stay close to the global model
+            if mu > 0:                                    # FedProx
                 prox = sum(((p - g) ** 2).sum()
                            for p, g in zip(model.parameters(), global_params))
-                loss = base + (mu / 2) * prox
+                loss = loss + (mu / 2) * prox
+            if curv is not None and lam > 0:              # FedCurv
+                theta = torch.cat([p.reshape(-1) for p in model.parameters()])
+                loss = loss + lam * ((A * theta ** 2).sum() - 2 * (b * theta).sum())
             loss.backward()
             opt.step()
             total += base.item() * len(y)
             n += len(y)
     return total / n
+
+
+def fisher_diag(model, loader, device) -> np.ndarray:
+    """Diagonal empirical Fisher: mean of squared per-sample gradients."""
+    model.to(device).eval()
+    crit = nn.BCEWithLogitsLoss()
+    F = [torch.zeros_like(p) for p in model.parameters()]
+    n = 0
+    for X, y in loader:
+        for i in range(len(y)):
+            model.zero_grad()
+            crit(model(X[i:i + 1].to(device)), y[i:i + 1].to(device)).backward()
+            for f, p in zip(F, model.parameters()):
+                f += p.grad.detach() ** 2
+            n += 1
+    return (torch.cat([f.reshape(-1) for f in F]).cpu().numpy() / n).astype(np.float32)
 
 def test(model, loader, device):
     model.to(device).eval()

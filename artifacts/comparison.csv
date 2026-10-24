@@ -1,0 +1,4 @@
+algorithm,final_acc,best_acc,best_round,avg_last3_acc,final_loss
+FedAvg,82.16,85.95,2,82.88,0.4353
+FedProx,82.7,88.65,3,84.14,0.4003
+FedCurv,79.46,85.95,2,80.9,0.4378
