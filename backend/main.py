@@ -117,3 +117,9 @@ def compare():
             "loss": [round(ev[str(r)]["eval_loss"], 4) for r in rounds],
         }
     return out
+
+@app.get("/api/baselines")
+def baselines():
+    """Centralized vs local-only vs federated results (from scripts/baselines.py)."""
+    f = ARTIFACT_DIR / "baselines.json"
+    return json.loads(f.read_text()) if f.exists() else {}

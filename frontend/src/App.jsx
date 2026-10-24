@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Charts from "./Charts";
+import Baselines from "./Baselines";
 
 const API = (import.meta.env.VITE_API_URL || "http://localhost:8000") + "/api";
 
@@ -21,12 +22,14 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [compare, setCompare] = useState({});
+  const [baselines, setBaselines] = useState({});
   const [error, setError] = useState("");
 
   const load = async () => {
     try {
       setHistory(await (await fetch(`${API}/history`)).json());
       setCompare(await (await fetch(`${API}/compare`)).json());
+      setBaselines(await (await fetch(`${API}/baselines`)).json());
     } catch {
       setError(
         "Cannot reach the backend. If it is hosted on Render's free plan, wait 60 seconds and refresh."
@@ -114,6 +117,7 @@ export default function App() {
         </div>
       )}
 
+      <Baselines data={baselines} />
       <Charts compare={compare} />
 
       <h3>Prediction history</h3>
