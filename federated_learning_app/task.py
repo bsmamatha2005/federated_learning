@@ -26,22 +26,27 @@ def load_data(idx: int, batch_size: int):
             DataLoader(test, batch_size=batch_size))
 
 
-def train(model, loader, epochs, lr, device):
+def train(model, loader, epochs, lr, device, mu=0.0):
     model.to(device).train()
     crit = nn.BCEWithLogitsLoss()
     opt = torch.optim.Adam(model.parameters(), lr=lr)
+    global_params = [p.detach().clone() for p in model.parameters()]  # server's model
     total, n = 0.0, 0
     for _ in range(epochs):
         for X, y in loader:
             X, y = X.to(device), y.to(device)
             opt.zero_grad()
-            loss = crit(model(X), y)
+            base = crit(model(X), y)
+            loss = base
+            if mu > 0:   # FedProx: stay close to the global model
+                prox = sum(((p - g) ** 2).sum()
+                           for p, g in zip(model.parameters(), global_params))
+                loss = base + (mu / 2) * prox
             loss.backward()
             opt.step()
-            total += loss.item() * len(y)
+            total += base.item() * len(y)
             n += len(y)
     return total / n
-
 
 def test(model, loader, device):
     model.to(device).eval()

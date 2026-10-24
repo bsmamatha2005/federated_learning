@@ -16,8 +16,9 @@ def train(msg: Message, context: Context):
     model.load_state_dict(msg.content["arrays"].to_torch_state_dict())
     idx = context.node_config["partition-id"]          # 0..3 = which hospital
     trainloader, _ = load_data(idx, context.run_config["batch-size"])
+    mu = float(msg.content["config"].get("proximal-mu", 0.0))
     loss = train_fn(model, trainloader, context.run_config["local-epochs"],
-                    msg.content["config"]["lr"], DEVICE)
+                    msg.content["config"]["lr"], DEVICE, mu)
     content = RecordDict({
         "arrays": ArrayRecord(model.state_dict()),
         "metrics": MetricRecord({"train_loss": loss,

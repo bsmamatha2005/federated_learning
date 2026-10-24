@@ -30,3 +30,4 @@ num-server-rounds = 10
 learning-rate = 0.01
 local-epochs = 3
 batch-size = 32
+proximal-mu = 0.0
