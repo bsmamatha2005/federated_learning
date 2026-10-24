@@ -1,0 +1,42 @@
+{
+  "hospitals": [
+    {
+      "id": "cleveland",
+      "name": "Cleveland Clinic, USA",
+      "records": 303,
+      "train": 242,
+      "test": 61,
+      "positive_pct": 45.9
+    },
+    {
+      "id": "hungarian",
+      "name": "Hungarian Institute of Cardiology",
+      "records": 294,
+      "train": 235,
+      "test": 59,
+      "positive_pct": 36.1
+    },
+    {
+      "id": "switzerland",
+      "name": "University Hospital, Switzerland",
+      "records": 123,
+      "train": 98,
+      "test": 25,
+      "positive_pct": 93.5
+    },
+    {
+      "id": "va",
+      "name": "VA Medical Center, Long Beach, USA",
+      "records": 200,
+      "train": 160,
+      "test": 40,
+      "positive_pct": 74.5
+    }
+  ],
+  "total_records": 920,
+  "model_params": 1249,
+  "update_kb": 4.9,
+  "fedcurv_extra_kb": 9.8,
+  "local_epochs": 3,
+  "num_rounds": 10
+}

@@ -123,3 +123,32 @@ def baselines():
     """Centralized vs local-only vs federated results (from scripts/baselines.py)."""
     f = ARTIFACT_DIR / "baselines.json"
     return json.loads(f.read_text()) if f.exists() else {}
+
+
+
+@app.get("/api/fl-process")
+def fl_process():
+    """Hospital facts + per-round results, for the 'How federated learning works' section."""
+    f = ARTIFACT_DIR / "fl_process.json"
+    info = json.loads(f.read_text()) if f.exists() else {}
+    algorithms = {}
+    for key, label in LABELS.items():
+        hf = ARTIFACT_DIR / f"{key}_history.json"
+        if not hf.exists():
+            continue
+        h = json.loads(hf.read_text())
+        ev = h.get("evaluate_metrics_clientapp", {})
+        tr = h.get("train_metrics_clientapp", {})
+        algorithms[label] = {
+            "mu": h.get("mu", 0),
+            "curv_lambda": h.get("curv_lambda", 0),
+            "rounds": [
+                {"round": r,
+                 "acc": round(ev[str(r)]["eval_acc"] * 100, 2),
+                 "eval_loss": round(ev[str(r)]["eval_loss"], 4),
+                 "train_loss": round(tr.get(str(r), {}).get("train_loss", 0), 4)}
+                for r in sorted(int(x) for x in ev)
+            ],
+        }
+    info["algorithms"] = algorithms
+    return info
